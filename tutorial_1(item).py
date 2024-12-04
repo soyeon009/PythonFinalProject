@@ -49,8 +49,12 @@ def main():
     # 움직이는 벽(2)와 파괴 가능한 벽(3) 위치 추적
     movable_walls = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 2]
     destructible_walls = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 3]
-    destructible_items = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 8] # 아이템 위치를 찾아서 리스트 (x, y) 로 저장
-    destructible_escape = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 4] # 탈출 위치를 찾아서 리스트 (x, y) 로 저장
+
+    # 아이템 위치를 찾아서 리스트 (x, y) 로 저장
+    destructible_items = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 8]
+    
+    # 탈출 위치를 찾아서 리스트 (x, y) 로 저장
+    destructible_escape = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 4]
 
     # 초기 상태 저장
     initial_movable_walls = movable_walls[:]
@@ -253,17 +257,15 @@ def main():
             elif level_map[new_y][new_x] == 0 or level_map[new_y][new_x] == 5 or level_map[new_y][new_x] == 6:
                 player_pos = [new_x, new_y]
 
-            # 이동 위치가 아이템 위치라면 True로 바꾸고, 위치 제거
+            # 이동 위치가 아이템 위치라면 True로 바꾸고, 위치 0으로 변경, 플레이어 위치 새로 이동
             elif [new_x, new_y] in destructible_items:
                 destructible_items.remove([new_x, new_y])
                 item_get = True
                 level_map[new_y][new_x] = 0
                 player_pos = [new_x, new_y]
 
-            # 탈출지점 처리 (4)
-            # 이동 위치가 아이템 위치라면 True로 바꾸고, 위치 제거
-            
-
+            # 탈출 위치 처리 (4)
+            # 아이템 획득 여부 판별과 플레이어 위치(탈출 위치)에 따른 맵 자동 이동
             elif level_map[new_y][new_x] == 4 and item_get == True:
                 destructible_escape.remove([new_x, new_y])
                 level_map[new_y][new_x] = 0
@@ -337,7 +339,7 @@ def main():
         # 플레이어 그리기 (오프셋 적용)
         screen.blit(current_image, (player_pos[0] * TILE_SIZE, player_pos[1] * TILE_SIZE + offset_y))
 
-        # 남은 벽 부수기 횟수와 데스 카운트 출력
+        # 남은 벽 부수기 횟수와 데스 카운트, 아이템 획득 유무 출력
         info_text = font.render(f"Wall Breaks: {break_limit - break_count} | Death: {death_count}  | Acquire item : {item_get}", True, BLACK)
         screen.blit(info_text, (10, 10))
 
