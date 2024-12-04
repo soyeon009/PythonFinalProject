@@ -18,15 +18,15 @@ def main():
     player_pos = [1, 1]  # 플레이어 시작 위치
     initial_player_pos = player_pos[:]
     player_images = {
-        "up": pygame.image.load("up.png"),
+        "up": pygame.image.load("1up.png"),
         "down": pygame.image.load("down.png"),
         "left": pygame.image.load("left.png"),
         "right": pygame.image.load("right.png"),
     }
     current_image = player_images["down"]
 
-    sound = pygame.mixer.Sound
-    sound.play(-1)
+    #sound = pygame.mixer.Sound
+    #sound.play(-1)
 
     # 0: 움직일수있는 공간 1: 벽(이동x) 2:움직일수있는벽 3: 파괴가능한벽 4:몬스터 5:포탈 6:블록 놓는 위치 7: 사라지는 블럭 8 : 아이템
     level_map = [
@@ -89,7 +89,7 @@ def main():
     onoffwall_img = pygame.transform.scale(onoffwall_img,(TILE_SIZE,TILE_SIZE))
 
         # 아이템 이미지 로드
-    item_image = pygame.image.load("image/test_item.png")
+    item_image = pygame.image.load("item.png")
     item_image = pygame.transform.scale(item_image, (TILE_SIZE, TILE_SIZE))  # 타일 크기에 맞게 조정
 
     # 아이템 획득 여부 (기본값: False)
@@ -261,6 +261,8 @@ def main():
             elif [new_x, new_y] in destructible_items:
                 destructible_items.remove([new_x, new_y])
                 item_get = True
+                level_map[new_y][new_x] = 0
+                player_pos = [new_x, new_y]
 
             #target_position에 움직이는 블록이 있다면 맵에 있는 7을 0으로 바꿈
             cnt = 0                
