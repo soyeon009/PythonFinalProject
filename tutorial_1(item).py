@@ -218,7 +218,7 @@ def main():
                 monster["last_move_time"] = current_time  # 몬스터별 마지막 이동 시간 업데이트
 
     def move_player(dx, dy, direction):
-        nonlocal player_pos, current_image, break_count
+        nonlocal player_pos, current_image, break_count, item_get
         new_x, new_y = player_pos[0] + dx, player_pos[1] + dy
 
         if 0 <= new_x < len(level_map[0]) and 0 <= new_y < len(level_map):
@@ -279,7 +279,7 @@ def main():
         for monster in monsters:
             if player_pos == monster["current_pos"]:
                 death_count += 1
-                print(f"플레이어 사망! 현재 데스 카운트: {death_count} /  / Acquire item : {item_get}")
+                print(f"플레이어 사망! 현재 데스 카운트: {death_count}")
                 reset_player_and_walls()  # 플레이어 위치와 벽들만 초기화
                 break  # 하나의 몬스터와 충돌하면 더 이상 체크하지 않음
 
@@ -328,7 +328,7 @@ def main():
         screen.blit(current_image, (player_pos[0] * TILE_SIZE, player_pos[1] * TILE_SIZE + offset_y))
 
         # 남은 벽 부수기 횟수와 데스 카운트 출력
-        info_text = font.render(f"Wall Breaks: {break_limit - break_count} | Death: {death_count}", True, BLACK)
+        info_text = font.render(f"Wall Breaks: {break_limit - break_count} | Death: {death_count}  | Acquire item : {item_get}", True, BLACK)
         screen.blit(info_text, (10, 10))
 
         pygame.display.update() 
