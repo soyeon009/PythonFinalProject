@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -35,7 +36,7 @@ def main():
         [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1], 
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
@@ -49,6 +50,7 @@ def main():
     movable_walls = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 2]
     destructible_walls = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 3]
     destructible_items = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 8] # 아이템 위치를 찾아서 리스트 (x, y) 로 저장
+    destructible_escape = [[x, y] for y, row in enumerate(level_map) for x, tile in enumerate(row) if tile == 4] # 탈출 위치를 찾아서 리스트 (x, y) 로 저장
 
     # 초기 상태 저장
     initial_movable_walls = movable_walls[:]
@@ -246,13 +248,7 @@ def main():
                     player_pos = [new_x, new_y]
                 else:
                     return  # 벽 부수기 제한 초과
-
-            # 도착지점 처리 (4)
-            elif level_map[new_y][new_x] == 4:
-                print("Goal Reached!")
-                pygame.quit()
-                sys.exit()
-
+            
             # 일반 이동
             elif level_map[new_y][new_x] == 0 or level_map[new_y][new_x] == 5 or level_map[new_y][new_x] == 6:
                 player_pos = [new_x, new_y]
@@ -263,6 +259,18 @@ def main():
                 item_get = True
                 level_map[new_y][new_x] = 0
                 player_pos = [new_x, new_y]
+
+            # 탈출지점 처리 (4)
+            # 이동 위치가 아이템 위치라면 True로 바꾸고, 위치 제거
+            
+
+            elif level_map[new_y][new_x] == 4 and item_get == True:
+                destructible_escape.remove([new_x, new_y])
+                level_map[new_y][new_x] = 0
+                player_pos = [new_x, new_y]
+                os.system('python story1.py')
+                pygame.quit()
+                sys.exit()
 
             #target_position에 움직이는 블록이 있다면 맵에 있는 7을 0으로 바꿈
             cnt = 0                
