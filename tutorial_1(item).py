@@ -29,9 +29,9 @@ def main():
     #sound = pygame.mixer.Sound
     #sound.play(-1)
 
-    # 0: 움직일수있는 공간 1: 벽(이동x) 2:움직일수있는벽 3: 파괴가능한벽 4:몬스터 5:포탈 6:블록 놓는 위치 7: 사라지는 블럭 8 : 아이템
+    # 0: 움직일수있는 공간 1: 벽(이동x) 2:움직일수있는벽 3: 파괴가능한벽 4:몬스터 5:포탈 6:블록 놓는 위치 7: 사라지는 블럭 8 : 아이템 9 : 리셋 버튼
     level_map = [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 1], 
         [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
         [1, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 1], 
@@ -100,6 +100,10 @@ def main():
 
     # 아이템 획득 여부 (기본값: False)
     item_get = False
+
+    # 리셋 버튼 이미지 로드
+    reset_btn = pygame.image.load("reset_btn.png")
+    reset_btn = pygame.transform.scale(reset_btn, (TILE_SIZE, TILE_SIZE))  # 타일 크기에 맞게 조정
 
 
     # 몬스터 이미지 설정
@@ -284,7 +288,30 @@ def main():
                         level_map[off_y][off_x]=0
 
         current_image = player_images[direction]
+    
 
+
+    def reset_all() :
+        nonlocal death_count, player_pos, current_image, destructible_walls, movable_walls, level_map, break_count
+        
+        # 데스 카운트 추가
+        death_count += 1
+
+        # 플레이어 위치 초기화
+        player_pos = initial_player_pos[:]
+        current_image = player_images["down"]
+
+        # 벽 부수기 횟수 초기화
+        break_count = 0
+
+        # 맵 초기화
+        level_map = [row[:] for row in initial_level_map]
+
+        # 파괴 가능한 벽 초기화
+        destructible_walls = initial_destructible_walls[:]
+
+        # 움직이는 벽 초기화
+        movable_walls = initial_movable_walls[:]
 
     def monster_contact():
         nonlocal death_count, player_pos
